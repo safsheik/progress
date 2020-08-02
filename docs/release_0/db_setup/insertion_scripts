@@ -1,0 +1,10 @@
+INSERT INTO rtcustomer.oauth_client_details (client_id,resource_ids,client_secret,"scope",authorized_grant_types,web_server_redirect_uri,authorities,access_token_validity,refresh_token_validity,additional_information,autoapprove) VALUES 
+('client','oauth2-resource','$2a$10$4R/rWflN2RDiGZ3TvGplN.Z7fpILYAop9kJKqk7FgZnHCGhwFSGYS','read,write','authorization_code,check_token,refresh_token,password',NULL,'ROLE_CLIENT',900,21600,NULL,NULL)
+;
+
+INSERT INTO rtcustomer.oauth_user (id,email,"password","role") VALUES 
+(246,'masanaliyarshahulhameed@progrexion.com                                                              ','$2a$10$oYCLoyersGuOOGZDhiKru.zfcfW0SNRVSHYqDRQFXfzeb2N2kISWy','ROLE_ADMIN')
+,(123,'svijayakumar@progrexion.com                                                                         ','$2a$10$oYCLoyersGuOOGZDhiKru.zfcfW0SNRVSHYqDRQFXfzeb2N2kISWy','ROLE_USER')
+,(101,'testuser1@progrexion.com                                                                            ','$2a$10$oYCLoyersGuOOGZDhiKru.zfcfW0SNRVSHYqDRQFXfzeb2N2kISWy','ROLE_USER')
+,(42,'rspuser1@progrexion.com                                                                             ','$2a$10$oYCLoyersGuOOGZDhiKru.zfcfW0SNRVSHYqDRQFXfzeb2N2kISWy','ROLE_ADMIN')
+;

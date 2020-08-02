@@ -1,0 +1,1359 @@
+FORMAT: 1A
+HOST: https://extracredit-bcm-env.herokuapp.com/
+
+# Build Credit Module
+
+The Build Credit module will provide services for internal PGX systems to create RentTrack accounts for Extra Credit users.
+
+# Build Credit Module Services
+
+
+## Authentication [/buildcredit/oauth/token]
+
+Authorization: Basic
+
+### Oauth authentication [POST]
++ Request (application/x-www-form-urlencoded)
+        
+        {  
+            "grant_type":"password",
+            "username":"rspuser1@progrexion.com",
+            "password":"saf"
+        }
++ Response 200 (application/json)
+        
+        { 
+            "access_token": "eyJhbGciOiJIUzI....zzuRA",
+            "expires_in": 3600, 
+            "token_type": "bearer", 
+            "scope": null, 
+            "refresh_token": "MzEzZDg4ZDAzO....mRlYw" 
+        }
+        
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Missing grant Type",
+              "errorCode": "BCM-001"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "User not found",
+              "errorCode": "BCM-002"
+        }
+        
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "RemoteSystemException: Internal Server Error",
+              "errorCode": "BCM-003"
+        }
+
+
+
+## Create a new customer in renttrack [/buildcredit/v1/customer/{ucid}/{brand}]
+The RSP user can be enrolled in to RentTrack service through BCM using the below API. As a user he/she has to provide his/her details such as Firstname, LastName, Email, DOB, Rental Address, Rent Amount, Rent Due Date, Landlord contacts, Rental start date. On successful invoking the user will be enrolled in to Rent Track and given $ 0 subscription with the Plan name: consumer_lite
+
++ Parameters
+    + ucid: 123 (required, number) - Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+
+
+        Authorization: Bearer {OAuth-Access-Token}
+
+### Create a new tenant user [POST]
+
++ Request (application/json)
+        
+        {  
+            "type":"tenant",
+            "firstName":"John",
+            "lastName":"Doe",
+            "email":"joe@xyz.com",
+            "dob": "1980-07-30",
+            
+            "leaseData":{
+                "rental_address":{
+                    "address1": "No 121212",
+                    "address2": "Post Box 100",
+                    "state": "New York",
+                    "city": "Albany",
+                    "zip": "10001",
+                    "country": "US"
+            },
+            
+           "rent":"98.00",
+            "dueDay": "20",
+            
+            "landlord":{
+                    "type": "individual",
+                    "name": "William",
+                    "phone": "9879879871",
+                    "email": "bill@prog.com"
+                   
+            },
+            
+            "start_at": "2019-09-25"
+            
+            
+            }
+            
+        }
+        
++ Response 201 (application/json)
+        
+        {
+             "status": true
+                
+        }
+        
++ Response 400 (application/json)
+
+        {             
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Access Token while Creating tenant User",
+              "errorCode": "BCM-101"
+        }
++ Response 400 (application/json)
+
+        {             
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Partner Token while Creating tenant User",
+              "errorCode": "BCM-106"
+        }
++ Response 400 (application/json)
+
+        {             
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Refresh Token while Creating tenant User",
+              "errorCode": "BCM-111"
+        }
++ Response 400 (application/json)
+
+        {             
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Tenant User",
+              "errorCode": "BCM-116"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Update DOB while creating Tenant User",
+              "errorCode": "BCM-122"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Subscription while creating Tenant User",
+              "errorCode": "BCM-124"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Refresh Token while Creating Subscription",
+              "errorCode": "BCM-128"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Access Token while Creating tenant User",
+              "errorCode": "BCM-102"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Partner Token while Creating tenant User",
+              "errorCode": "BCM-107"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Refresh Token while Creating tenant User",
+              "errorCode": "BCM-112"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Refresh Token while Creating Subscription",
+              "errorCode": "BCM-129"
+        }
++ Response 409 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 409,
+              "error": "Customer already exists in BCM-An account has already been created for this ucid: 123",
+              "errorCode": "BCM-120"
+        }
++ Response 409 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 409,
+              "error": "Unable to Create Tenant User",
+              "errorCode": "BCM-117"
+        }
++ Response 415 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 415,
+              "error": "Unable to Create Access Token while Creating tenant User",
+              "errorCode": "BCM-103"
+        }
++ Response 415 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 415,
+              "error": "Unable to Create Partner Token while Creating tenant User",
+              "errorCode": "BCM-108"
+        }
++ Response 415 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 415,
+              "error": "Unable to Create Refresh Token while Creating tenant User",
+              "errorCode": "BCM-113"
+        }
++ Response 415 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 415,
+              "error": "Unable to Create Refresh Token while Creating Subscription",
+              "errorCode": "BCM-130"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Access Token while Creating tenant User",
+              "errorCode": "BCM-104"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Partner Token while Creating tenant User",
+              "errorCode": "BCM-109"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Refresh Token while Creating tenant User",
+              "errorCode": "BCM-114"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Tenant User",
+              "errorCode": "BCM-118"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Tenant User - Remote System Exception",
+              "errorCode": "BCM-119"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Update DOB while creating Tenant User",
+              "errorCode": "BCM-123"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Subscription while creating Tenant User",
+              "errorCode": "BCM-126"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Refresh Token while Creating Subscription",
+              "errorCode": "BCM-131"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Access Token while Creating tenant User - Remote System Exception",
+              "errorCode": "BCM-133"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Partner Token while Creating tenant User - Remote System Exception",
+              "errorCode": "BCM-134"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Refresh Token while Creating tenant User - Remote System Exception",
+              "errorCode": "BCM-135"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Update DOB while creating Tenant User - Remote System Exception",
+              "errorCode": "BCM-136"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Subscription while creating Tenant User - Remote System Exception",
+              "errorCode": "BCM-137"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Refresh Token while Creating Subscription - Remote System Exception",
+              "errorCode": "BCM-138"
+        }
++ Response 503 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 503,
+              "error": "Unable to Create Access Token while Creating tenant User",
+              "errorCode": "BCM-105"
+        }
++ Response 503 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 503,
+              "error": "Unable to Create Partner Token while Creating tenant User",
+              "errorCode": "BCM-110"
+        }
++ Response 503 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 503,
+              "error": "Unable to Create Refresh Token while Creating tenant User",
+              "errorCode": "BCM-115"
+        }
++ Response 503 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 503,
+              "error": "Unable to Create Refresh Token while Creating Subscription",
+              "errorCode": "BCM-132"
+        }
+
+### Get tenant availability status from BCM[GET]
+
++ Response 200 (application/json)
+        
+        {
+             "status": "ACTIVE || INACTIVE || NOT CREATED"
+                
+        }
+        
+        
++ Response 400 (application/json)
+
+        {             
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to get tenant user status",
+              "errorCode": "BCM-101"
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to get Tenant User status - Remote System Exception",
+              "errorCode": "BCM-119"
+        }
+
+## Create a payment account for customer [/buildcredit/v1/customer/payment_account/{ucid}/{brand}]
+As a RSP user, he/she will create a Payment account in the RentTrack system through BCM for tracking rental payment transactions. Upon calling the API by passing public token, plaid_account_id and the optional pay type as “nopay” as request body of the API, BCM will create a payment account in the RentTrack system.
++ Parameters
+    + ucid: 123 (required, number) - Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+
+### Create a payment account [POST]
+
++ Request (application/json)
+        
+        { 
+            "public_token": "public-sandbox-d2bacae2-de1e-4ae3-94c1-cdc329488693",
+            "plaid_account_id": "2117277225",
+            "pay_type": "nopay"
+        }
+        
++ Response 201 (application/json)
+        
+        {
+                "transaction_search_status": "Multiple",
+                "plaid_account": false,
+                "reconnect_to_plaid": false,
+                "historical_update_complete": false,
+                "transactions": {
+                    "transaction_id": "G5K3gvJql1TlWzEmKwE7HwMv6wkMaqs15EvXB",
+                    "transaction_amount": 5.12,
+                    "name": "Uber 063015 SF**POOL**",
+                    "transaction_date": "2019-09-23"
+                },
+                {
+                    "transaction_id": "bJP3GvZlA7FA8ZgRGzgPu4eJ64MeZViVXDj1j",
+                    "transaction_amount": 4.52,
+                    "name": "McDonald's",
+                    "transaction_date": "2019-09-27"
+                },
+                {
+                    "transaction_id": "mk3LGdvNzEuajZlGE7lzC1mxR1JmDVtLDqNna",
+                    "transaction_amount": 10.52,
+                    "name": "Starbucks",
+                    "transaction_date": "2019-09-02"
+                }
+        }  
+
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Invalid Public Token",
+              "errorCode": "BCM-300"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Payment Account",
+              "errorCode": "BCM-301"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Refresh Token while Creating Payment Account",
+              "errorCode": "BCM-304"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Refresh Token while Creating Payment Account",
+              "errorCode": "BCM-305"
+
+        }
++ Response 415 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 415,
+              "error": "Unable to Create Refresh Token while Creating Payment Account",
+              "errorCode": "BCM-306"
+        }
+       
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Payment Account",
+              "errorCode": "BCM-302"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Payment Account - Remote System Exception",
+              "errorCode": "BCM-302"
+        }
++ Response 503 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 503,
+              "error": "Unable to Create Refresh Token while Creating Payment Account",
+              "errorCode": "BCM-308"
+        }
+
+## Get lease details for users [/buildcredit/v1/customer/lease/{ucid}/{brand} ]
+As a RSP user, he/she will fetch their lease details which was added lastly to RentTrack system through BCM using the below API. Upon calling the API, he/she will get the lease details such as: Rental Address, Rent Amount, Rent Due Date, and Rent Start Date(if any of values null don't display in the response). 
+
++ Parameters
+    + ucid: 123 (required, number) -  Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+
+### Get lease details [GET]
+
++ Response 200 (application/json)
+        
+         {  
+            "rental_address":{  
+                    "address1"  :"257 East",
+                    "address2"  :"200 South",
+                    "city"      :"Salt Lake City",
+                    "state"     :"Utah",
+                    "zip"       :"84111",
+                    "country"   :"US"
+            },
+            
+            "rent": "98.50",
+            "dueDay": "15",
+            "startAt": "2019-09-13"
+        }
+
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to get Lease",
+              "errorCode": "BCM-200"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Refresh Token while invoking get Lease",
+              "errorCode": "BCM-204"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Refresh Token while invoking get Lease",
+              "errorCode": "BCM-205"
+
+        }
++ Response 404 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 404,
+              "error": "Unable to get Lease",
+              "errorCode": "BCM-201"
+
+        }
++ Response 415 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 415,
+              "error": "Unable to Create Refresh Token while invoking get Lease",
+              "errorCode": "BCM-206"
+        }
+        
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to get Lease",
+              "errorCode": "BCM-202"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to get Lease - Remote System Exception",
+              "errorCode": "BCM-203"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Refresh Token while invoking get Lease",
+              "errorCode": "BCM-207"
+        }
++ Response 503 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 503,
+              "error": "Unable to Create Refresh Token while invoking get Lease",
+              "errorCode": "BCM-208"
+        }
+## Get Status of Plaid Transaction Connection [/buildcredit/v1/customer/payment_account/{ucid}/{brand} ]
+As a RSP user, he/she will get their Plaid connectivity status from RentTrack system through BCM using the below API. Upon calling this API, he/she will get the response as below Response Body.
+
++ Parameters
+    + ucid: 123 (required, number) - Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+### Get Status of Plaid Transaction Connection [GET]
+
++ Response 201 (application/json)
+      
+        
+            {
+                "id": 1403336383,
+                "nick_name": "Plaid Checking",
+                "plaid_account": false,
+                "reconnect_to_plaid": false,
+                "historical_update_complete": false
+          
+            }
+           
+
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Refresh Token while getting Payment Account",
+              "errorCode": "BCM-313"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Refresh Token while getting Payment Account",
+              "errorCode": "BCM-314"
+
+        }
++ Response 415 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 415,
+              "error": "Unable to Create Refresh Token while getting Payment Account",
+              "errorCode": "BCM-315"
+        }
+        
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Refresh Token while getting Payment Account",
+              "errorCode": "BCM-316"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Create Refresh Token while getting Payment Account - Remote System Exception",
+              "errorCode": "BCM-318"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to get Payment Account",
+              "errorCode": "BCM-311"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to get Payment Account - Remote System Exception",
+              "errorCode": "BCM-312"
+        }
++ Response 503 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 503,
+              "error": "Unable to Create Refresh Token while getting Payment Account",
+              "errorCode": "BCM-317"
+        }
+### Initiate Plaid Reconnection [PUT]
+
++ Response 201 (application/json)
+      
+        
+            {
+                "public_token": "dc69f3cd-59fb-452a-bde9-06515dc9a407",
+                "expiration": "2019-10-15"
+                
+            }
+           
+
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "UnableUnable to Reconnect Plaid",
+              "errorCode": "BCM-313"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Refresh Token while getting Payment Account",
+              "errorCode": "BCM-314"
+
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Reconnect Plaid ",
+              "errorCode": "BCM-315"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Reconnect Plaid  - Remote System Exception",
+              "errorCode": "BCM-312"
+        }
+         
+### Update Plaid Reconnection [PATCH]
+
++ Response 201 (application/json)
+      
+        
+            {
+                "public_token": "dc69f3cd-59fb-452a-bde9-06515dc9a407",
+                "expiration": "2019-10-15"
+                
+            }
+           
+
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "UnableUnable to Reconnect Plaid",
+              "errorCode": "BCM-313"
+        }
++ Response 401 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 401,
+              "error": "Unable to Create Refresh Token while getting Payment Account",
+              "errorCode": "BCM-314"
+
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Reconnect Plaid ",
+              "errorCode": "BCM-315"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to Reconnect Plaid  - Remote System Exception",
+              "errorCode": "BCM-312"
+        }
+      
+        
+## Capture lease transaction from customer [/buildcredit/v1/customer/transaction/{ucid}/{brand}]
+As a RSP user, he/she will search for their rental transactions happened based on the given Rent Amount and Rent Due date. Upon calling this API, he/she will get the details such as Transaction status: Found/Multiple/Missing and the corresponding Transactions details.
++ Parameters
+    + ucid: 123 (required, number) - Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+
+### Search lease transactions for the customer [GET]
+   
++ Response 201 (application/json)
+        
+        
+            {
+                "transaction_search_status":"Found",
+                "transactions": [
+                                {
+                                    "transaction_id": "wpexJAlKz5F7AdZ8a91dFyexQ3dRrnur633GK",
+                                    "transaction_amount": "12.00",
+                                    "name": "McDonald's",
+                                    "transaction_date": "2019-10-15"
+                                    }
+                                ]
+            }
+
+## Match selected lease transaction [/buildcredit/v1/customer/transaction/match/{ucid}/{brand}]
+As a RSP user, he/she will select the correct lease transaction as fingerprint to RentTrack system through BCM by passing transaction id in the request body. Upon calling this API with the transaction id, internally RentTrack create an order for the lease.
+
++ Parameters
+    + ucid: 123 (required, number) - Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+
+### Match the selected lease transaction for the customer [POST]
++ Request (application/json)
+        
+        {
+            "transaction_id": "wpexJAlKz5F7AdZ8a91dFyexQ3dRrnur633GK"
+        
+        }
+        
++ Response 201 (application/json)
+
+        {
+            "id": 1444684318,
+            "status": "pending",
+            "type": "external",
+            "reference_id": "BnLV1JakoDijjBgQZ73eUgXz7NQRa4twbzLDJ",
+            "payment_source": "Plaid Checking",
+            "paid_for": "2019-10",
+            "delivery_method": "external"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Error while Matching Transactions",
+              "errorCode": "BCM-500"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Error while Matching Transactions. Unable to Create Refresh Token while searching for transactions",
+              "errorCode": "BCM-504"
+        }
++ Response 404 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 404,
+              "error": "Error while Matching Transactions",
+              "errorCode": "BCM-501"
+        }
++ Response 404 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 404,
+              "error": "No transaction Finder Id Found",
+              "errorCode": "BCM-510"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Matching Transactions",
+              "errorCode": "BCM-502"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Matching Transactions - Remote System Exception",
+              "errorCode": "BCM-503"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Matching Transactions. Unable to Create Refresh Token while searching for transactions",
+              "errorCode": "BCM-507"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Matching Transactions. Unable to Create Refresh Token while searching for transactions - Remote System Exception",
+              "errorCode": "BCM-509"
+        }
++ Response 503 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 503,
+              "error": "Error while Matching Transactions. Unable to Create Refresh Token while searching for transactions",
+              "errorCode": "BCM-508"
+        }
+
+## Get List of Reported Lease Orders [/buildcredit/v1/customer/lease/orders/{ucid}/{brand} ]
+As a RSP user, he/she will fetch all the reported lease orders so far from RentTrack system through BCM using the below API. Upon calling this API, he/she will get an array of reported lease orders(if any of values null don't display in the response). If no order exists, BCM shows response as No Content.
+
++ Parameters
+    + ucid: 123 (required, number) -  Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+
+### Get reported lease orders list [GET]
+
++ Response 200 (application/json)
+
+        {
+        
+        {
+            "id": 2228509462,
+            "payment_account": {
+                "id": 1977959033,
+                "nick_name": "Plaid Checking",
+                "type": "bank",
+                "last_four": "0000",
+                "institution_id": "ins_3",
+                "plaid_account": true
+            },
+            
+            "status": "pending",
+            "rent": "5.40",
+            "reference_id": "121212",
+            "payment_source": "card",
+            "paid_for":"2019-11",
+            "created_at": "2019-11-01",
+            "reported_at": {
+                "trans_union": "",
+                "experian": "",
+                "equifax": "",
+            },
+            "check_number": "12112"
+        },                                                                                                                                               ,
+        
+        {
+            "id": 1104486380,
+            "payment_account": {
+                "id": 1977959034,
+                "nick_name": "Plaid Checking",
+                "type": "bank",
+                "last_four": "0000",
+                "institution_id": "ins_3",
+                "plaid_account": true
+            },
+            
+            "status": "pending",
+            "rent": "12.00",
+            "reference_id": "121213",
+            "payment_source": "card",
+            "paid_for":"2019-12",
+            "created_at": "2019-12-01",
+            "reported_at": {
+                "trans_union": "",
+                "experian": "",
+                "equifax": "",
+            },
+            "check_number": "12113"
+        }   
+       
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to get Lease orders",
+              "errorCode": "BCM-200"
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Unable to Create Refresh Token while invoking get Lease orders",
+              "errorCode": "BCM-204"
+        }
+
+        
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to get Lease",
+              "errorCode": "BCM-202"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Unable to get Lease - Remote System Exception",
+              "errorCode": "BCM-203"
+        }
+
+
+## Get All Utilities Info [/buildcredit/v1/customer/utility/{ucid}/{brand} ]
+As a RSP user, he/she will get all their utilities details from RentTrack system through BCM using the below API. Upon calling this API, he/she will get the list of utilities 
+
++ Parameters
+    + ucid: 123 (required, number) -  Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+
+### Get All Utilities[GET]
+
++ Response 200 (application/json)
+
+        {
+        
+        {
+            "id": 4146935397,
+            "type": "wireless",
+            "name": "Verizon Wireless",
+            "status": "finished",
+            "reporting_start_at": "2018-10-23",
+            "match_summary": {
+                "count": "12",
+                "newest": {
+                    "util_transaction_id": 755839925,
+                    "util_amount": 58.12,
+                    "date": "2019-09-23"
+                        },
+                "oldest": {
+                    "util_transaction_id": 567619451,
+                    "util_amount": 51.47,
+                    "date": "2018-10-23"
+                        }
+                    }
+                    },
+                    
+         {
+            "id": 3582842478,
+            "type": "gas",
+            "name": "The Gas Company",
+            "status": "current",
+            "reporting_start_at": "2019-06-23",
+            "match_summary": {
+                "count": "4",
+                "newest": {
+                    "util_transaction_id": 482201244,
+                    "util_amount": 58.12,
+                    "date": "2019-09-23"
+                        },
+                "oldest": {
+                    "util_transaction_id": 1585826642,
+                    "util_amount": 51.47,
+                    "date": "2018-10-23"
+                        }
+                    }
+                    },           
+                    
+          {
+        "id": 4237461167,
+        "type": "water",
+        "name": "City of Santa Barbara Water",
+        "status": "pending",
+        "match_summary": {
+            "count": "10",
+            "newest": {
+                "util_transaction_id": 397317858,
+                "util_amount": 39.43,
+                "date": "2019-09-23"
+            },
+            "oldest": {
+                "util_transaction_id": 1871857091,
+                "util_amount": 35.47,
+                "date": "2018-12-23"
+                    }
+            }
+        }   
+       
+        }
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Customer information not found",
+              "errorCode": "BCM-121"
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Getting All Utilities",
+              "errorCode": "BCM-600"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Getting All Utilities ",
+              "errorCode": "BCM-601"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Getting Utility By Trade Line Id - Remote System Exception",
+              "errorCode": "BCM-609"
+        }
+        
+        
+## Get Customer Utility Transaction Details [/buildcredit/v1/customer/utility/{ucid}/{brand}/{utilTradeLineId} ]
+As a RSP user, he/she will get their Utility transaction details from the RentTrack system through BCM for the selected utility. Upon calling this api, he will get the list of transaction details such as utility transaction id, utility name, Utility amount and transaction date, on the selected utility.
+
++ Parameters
+    + ucid: 123 (required, number) -  Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+    + utilTradeLineId: 121212 (required, Number) - Customer utilTradeLine ID
+
+### Get Utility Transaction Details[GET]
+
++ Response 200 (application/json)
+
+        {
+        
+        {
+        "util_transaction_id" : 755839925,
+        "name" : "Verizon Wireless",
+        "util_amount" : 59.84,
+        "date" : "2019-08-23",
+        },
+        {
+        "util_transaction_id" : 1091380484,
+        "name" : "Verizon Wireless",
+        "util_amount" : 58.24,
+        "date" : "2019-07-23",
+        },
+        {
+        "util_transaction_id" : 4024758689,
+        "name" : "Verizon Wireless",
+        "util_amount" : 55.82,
+        "date" : "2019-06-23",
+        }        
+    
+        }
+        
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "CustomerError while Getting Utility By Trade Line Id",
+              "errorCode": "BCM-607"
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Getting Utility By Trade Line Id",
+              "errorCode": "BCM-608"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while Getting Utility By Trade Line Id - Remote System Exception",
+              "errorCode": "BCM-609"
+        }
+      
+## Tenant User Opt-In a Utility [/buildcredit/v1/customer/utility/{ucid}/{brand}/ ]
+As a RSP user, he/she will select a particular utility and update the Rent Track system through BCM using the below API. Upon calling the API by passing utility id on the API url, RentTrack will opt-in the given utility id and respond with status true.
+
++ Parameters
+    + ucid: 123 (required, number) -  Universal customer ID
+    + brand: CCOM (required, String) - Customer Brand
+
+### Update the opt-in utility as Current [PATCH]
++ Request (application/json)
+        
+        {
+            "utility_trade_id": "1234678912",
+            "opt_for": "GAS || WATER || ELECTRIC || WIRELESS"
+
+        }
++ Response 200 (application/json)
+
+        {
+        
+        "status" : true
+              
+        }
+        
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Error while Updating Utility Status",
+              "errorCode": "BCM-615"
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "ErrorError while Updating Utility Status",
+              "errorCode": "BCM-617"
+        }
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "Error while updating Utility Status - Remote System Exception",
+              "errorCode": "BCM-618"
+        }  
+        
+        
+## BCM Jobs [/buildcredit/v1/jobs/RENTTRACK_REPORTED_ORDERS?async=false&brand=/{brand}/ ]
+Job API contains three functions Start, Status and Stop( Get status and stop function, specific job id required to pass the url parameter)
+
++ Parameters
+    + brand: CCOM (required, String) - Customer Brand
+    
+### Job- Start[POST]
++ Request (application/json)
+        
+       
++ Response 200 (application/json)
+
+        {
+        
+        "status" : "completed",
+        "Start Time" : "2019-12-11 1:30",
+        "End Time" : "2019-12-11 1:40"
+              
+        }
+        
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Error while create BCM Job",
+              "errorCode": "BCM-615"
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "ErrorError while Create BCM Job",
+              "errorCode": "BCM-617"
+        }
+
+### Job-Status [GET]
++ Request (application/json)
+        
+       
++ Response 200 (application/json)
+
+        {
+        
+        
+              
+        }
+        
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Error while create BCM Job",
+              "errorCode": "BCM-615"
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "ErrorError while Create BCM Job",
+              "errorCode": "BCM-617"
+        }   
+        
+### Job-Stop[DELETE]
++ Request (application/json)
+        
+       
++ Response 200 (application/json)
+
+        {
+        
+        
+              
+        }
+        
++ Response 400 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 400,
+              "error": "Error while create BCM Job",
+              "errorCode": "BCM-615"
+        }
+
++ Response 500 (application/json)
+
+        {
+              "status": false,
+              "statusCode": 500,
+              "error": "ErrorError while Create BCM Job",
+              "errorCode": "BCM-617"
+        }  

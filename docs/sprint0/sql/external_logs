@@ -1,0 +1,11 @@
+CREATE TABLE rtcustomer.external_logs (
+	external_log_id serial NOT NULL,
+	ucid int8 NOT NULL,
+	vendor_id int8 NOT NULL,
+	url varchar(1000) NULL,
+	vendor_request_payload varchar(1000) NULL,
+	vendor_response_payload varchar(1000) NULL,
+	created_date date NOT NULL,
+	modified_date date NULL,
+	CONSTRAINT external_logs_pkey PRIMARY KEY (external_log_id)
+);

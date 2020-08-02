@@ -1,0 +1,10 @@
+-- SCHEMA: rtcustomer
+
+-- DROP SCHEMA rtcustomer ;
+
+CREATE SCHEMA rtcustomer
+    AUTHORIZATION bcm;
+
+GRANT ALL ON SCHEMA rtcustomer TO bcm WITH GRANT OPTION;
+
+GRANT ALL ON SCHEMA rtcustomer TO buildcreditmu WITH GRANT OPTION;

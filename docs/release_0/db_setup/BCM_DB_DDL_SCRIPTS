@@ -1,0 +1,162 @@
+
+-- Drop table
+
+-- DROP TABLE rtcustomer.customer_data;
+
+CREATE TABLE rtcustomer.customer_data (
+	customer_data_id serial NOT NULL,
+	ucid int8 NOT NULL,
+	brand varchar(100) NOT NULL,
+	transaction_finder_id int8 NULL,
+	customer_email varchar(256) NOT NULL,
+	access_token varchar(400) NULL,
+	refresh_token varchar(400) NULL,
+	token_expiry int8 NULL,
+	token_created_date date NULL,
+	created_date date NULL,
+	modified_date date NULL,
+
+	CONSTRAINT customer_data_pk PRIMARY KEY (customer_data_id)
+);
+
+--------------------------------------------------------------------
+
+
+-- Drop table
+
+-- DROP TABLE rtcustomer.customer_usage_activity;
+
+CREATE TABLE rtcustomer.customer_usage_activity (
+	activity_id serial NOT NULL,
+	customer_data_id int4 NOT NULL,
+	ucid int8 NOT NULL,
+	brand varchar(400) NOT NULL,
+	activity_usage varchar(400) NOT NULL,
+	created_date date NOT NULL
+
+);
+
+ALTER TABLE rtcustomer.customer_usage_activity ADD CONSTRAINT customer_usage_activity_fk FOREIGN KEY (customer_data_id) REFERENCES rtcustomer.customer_data(customer_data_id);
+-------------------------------------------------------------------
+
+-- Drop table
+
+-- DROP TABLE rtcustomer.external_logs;
+
+CREATE TABLE rtcustomer.external_logs (
+	external_log_id serial NOT NULL,
+	ucid int8 NOT NULL,
+	brand varchar(100) NULL,
+	http_method varchar(100) NULL,
+	vendor_id int8 NOT NULL,
+	url varchar(1000) NULL,
+	vendor_request_payload varchar(1000) NULL,
+	vendor_response_payload varchar(10000) NULL,
+	created_date date NOT NULL,
+	modified_date date NULL,
+	customer_data_id int4 NULL,
+	CONSTRAINT external_logs_pkey PRIMARY KEY (external_log_id)
+);
+-------------------------------------------------------------------
+
+-- Drop table
+
+-- DROP TABLE rtcustomer.oauth_access_token;
+
+CREATE TABLE rtcustomer.oauth_access_token (
+	token_id varchar(256) NULL,
+	"token" bytea NULL,
+	authentication_id varchar(256) NOT NULL,
+	user_name varchar(256) NULL,
+	client_id varchar(256) NULL,
+	authentication bytea NULL,
+	refresh_token varchar(256) NULL,
+	CONSTRAINT oauth_access_token_pkey PRIMARY KEY (authentication_id)
+);
+-------------------------------------------------------------------
+
+-- Drop table
+
+-- DROP TABLE rtcustomer.oauth_client_details;
+
+CREATE TABLE rtcustomer.oauth_client_details (
+	client_id varchar(256) NOT NULL,
+	resource_ids varchar(256) NULL,
+	client_secret varchar(256) NULL,
+	"scope" varchar(256) NULL,
+	authorized_grant_types varchar(256) NULL,
+	web_server_redirect_uri varchar(256) NULL,
+	authorities varchar(256) NULL,
+	access_token_validity int8 NULL,
+	refresh_token_validity int8 NULL,
+	additional_information varchar(4096) NULL,
+	autoapprove varchar(256) NULL,
+	CONSTRAINT oauth_client_details_pkey PRIMARY KEY (client_id)
+);
+
+-------------------------------------------------------------------
+
+-- Drop table
+
+-- DROP TABLE rtcustomer.oauth_refresh_token;
+
+CREATE TABLE rtcustomer.oauth_refresh_token (
+	token_id varchar(256) NULL,
+	"token" bytea NULL,
+	authentication bytea NULL
+);
+
+-------------------------------------------------------------------
+
+-- Drop table
+
+-- DROP TABLE rtcustomer.oauth_user;
+
+CREATE TABLE rtcustomer.oauth_user (
+	id int8 NOT NULL,
+	email bpchar(100) NULL,
+	"password" varchar(100) NULL,
+	"role" varchar(50) NULL,
+	CONSTRAINT "User_pkey" PRIMARY KEY (id)
+);
+
+-------------------------------------------------------------------
+
+
+-- Drop table
+
+-- DROP TABLE rtcustomer.webservice_logs;
+
+CREATE TABLE rtcustomer.webservice_logs (
+	id serial NOT NULL,
+	ucid int8 NOT NULL,
+	brand varchar(100) NULL,
+	url varchar(1000) NULL,
+	http_status_code int8 NULL,
+	http_method varchar(45) NULL,
+	request_payload varchar(1000) NULL,
+	response_payload varchar(1000) NULL,
+	created_date date NOT NULL,
+	modified_date date NULL,
+	CONSTRAINT webservice_logs_pkey PRIMARY KEY (id)
+);
+
+-------------------------------------------------------------------
+
+ALTER TABLE rtcustomer.customer_data OWNER to "bcm";
+ALTER TABLE rtcustomer.customer_usage_activity OWNER to "bcm";
+ALTER TABLE rtcustomer.external_logs OWNER to "bcm";
+ALTER TABLE rtcustomer.oauth_access_token OWNER to "bcm";
+ALTER TABLE rtcustomer.oauth_client_details OWNER to "bcm";
+ALTER TABLE rtcustomer.oauth_refresh_token OWNER to "bcm";
+ALTER TABLE rtcustomer.oauth_user OWNER to "bcm";
+ALTER TABLE rtcustomer.webservice_logs OWNER to "bcm";
+
+-------------------------------------------------------------------
+
+-------------------------------------------------------------------
+
+-------------------------------------------------------------------
+
+-------------------------------------------------------------------
+

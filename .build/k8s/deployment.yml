@@ -1,0 +1,72 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dbcheck-module
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dbcheck-module
+  name: dbcheck-module-web-service
+  annotations:
+    metallb.universe.tf/address-pool: dbcheck-module
+spec:
+  selector:
+    app: dbcheck-module-web
+  ports:
+  - name: web-8080
+    port: 8080
+    targetPort: 8080
+  - name: web-8787
+    port: 8787
+    targetPort: 8787
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: web
+  namespace: dbcheck-module
+  labels:
+    app: dbcheck-module-web
+    owner: extracredit
+    type: web-app
+    project: dbcheck-module
+spec:
+  replicas: 3
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: dbcheck-module-web
+  template:
+    metadata:
+      labels:
+        app: dbcheck-module-web
+    spec:
+      containers:
+      - name: dbcheck-module
+        image: registry.pgx.local/dbcheck-module/dbcheck-module:0.1
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8080
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2048Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        env:
+          - name: DEBUG_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: dbcheck-module-web-config
+                key: DEBUG_CONFIG
+          - name: WELCOME_MESSAGE
+            valueFrom:
+              configMapKeyRef:
+                name: dbcheck-module-web-config
+                key: WELCOME_MESSAGE
+
+  

@@ -1,0 +1,1 @@
+ALTER TABLE rtcustomer.customer_data ADD transaction_finder_id bigint;

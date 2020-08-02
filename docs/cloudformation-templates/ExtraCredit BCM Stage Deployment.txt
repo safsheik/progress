@@ -1,0 +1,158 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ExtraCredit BCM Stage Deployment
+
+
+Mappings:
+  Database:
+    aurora-postgresql:
+      default: default.aurora-postgresql10
+    compute:
+      size: db.r4.large
+    policy:
+      allowMajor: True
+      allowMinor: True
+      backupRetention: 14
+  Broker:
+    policy:
+      allowMinor: True
+
+Parameters:
+  ExportKeyToUse:
+    Type: String
+    Description: The export key provided by the vpc stack you wish to use.
+
+  DbEncryptionKeyId:
+    Type: String
+    Description: KMS Encryption Key ID
+  DBName:
+    Description: The name of the database inside the instance.
+    Type: String
+    Default: BuildCredit
+  DBClusterIdentifier:
+    Description: Name of the database cluster.
+    Type: String
+    AllowedPattern: "^[([a-z]|\\d|\\-)]{1,63}$"
+    ConstraintDescription: "DBClusterIdentifier can only contain lowercase letters, numbers, and/or hypen."
+    Default: db-extracreditdbcluster-identifier
+  MasterUsername:
+    Description: The master user name for the DB instance.
+    Type: String
+    Default: buildcreditmu
+  MasterUserPassword:
+    Description: The master password for the DB instance.
+    Type: String
+    NoEcho: true
+    Default:  MasterUserPassword
+
+Resources:
+  AuroraDNS:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Type: CNAME
+      Name:
+        Fn::Join:
+          - '.'
+          - - 'BuildCredit-db'
+            - Fn::ImportValue: !Sub "${ExportKeyToUse}-zone-name"
+      ResourceRecords:
+        - !GetAtt RDSDBCluster.Endpoint.Address
+      HostedZoneId:
+        Fn::ImportValue:
+          !Sub "${ExportKeyToUse}-zone-id"
+      TTL: '900'
+
+  # Security Groups
+  DefaultGlobalSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub global-sg-${AWS::StackName}
+      GroupName: !Sub global-sg-${AWS::StackName}
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${ExportKeyToUse}-vpc-id"
+
+  DefaultSgIngressPing:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref DefaultGlobalSg
+      CidrIp: 10.0.0.0/8
+      IpProtocol: icmp
+      FromPort: -1
+      ToPort: -1
+
+
+  RdsSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub rds-sg-${AWS::StackName}
+      GroupName: !Sub rds-sg-${AWS::StackName}
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${ExportKeyToUse}-vpc-id"
+
+  RdsSgIngressDBAccess:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref RdsSg
+      Description: allow db port access
+      CidrIp: 10.0.0.0/8
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+
+  RDSDBCluster:
+    DeletionPolicy: Retain
+    Type: "AWS::RDS::DBCluster"
+    Properties:
+      BackupRetentionPeriod: !FindInMap [ "Database", policy , backupRetention]
+      DatabaseName: !Ref DBName
+      DBClusterIdentifier: !Sub DBClusterIdentifier-${AWS::StackName}
+      DBClusterParameterGroupName: !FindInMap [ "Database", aurora-postgresql , "default"]
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Engine: aurora-postgresql
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      VpcSecurityGroupIds:
+        - !Ref DefaultGlobalSg
+        - !Ref RdsSg
+      StorageEncrypted: True
+      Port: 5432
+#     KmsKeyId: !Ref DbEncryptionKeyId
+#     PreferredMaintenanceWindow: !FindInMap [General, policy, maintenenceWindow]
+
+  RDSInstance01:
+    Type: "AWS::RDS::DBInstance"
+    DeletionPolicy: Delete
+    Properties:
+      AllowMajorVersionUpgrade: !FindInMap [Database, policy, allowMajor]
+      AutoMinorVersionUpgrade: !FindInMap [Database, policy, allowMinor]
+      DBInstanceClass: !FindInMap ['Database', compute, size]
+      DBClusterIdentifier: !Ref RDSDBCluster
+      Engine: aurora-postgresql
+#      DBSubnetGroupName: !Ref DBSubnetGroup
+      PubliclyAccessible: false
+
+  RDSInstance02:
+    Type: "AWS::RDS::DBInstance"
+    DeletionPolicy: Delete
+    Properties:
+      AllowMajorVersionUpgrade: !FindInMap [Database, policy, allowMajor]
+      AutoMinorVersionUpgrade: !FindInMap [Database, policy, allowMinor]
+      DBInstanceClass: !FindInMap ['Database', compute, size]
+      DBClusterIdentifier: !Ref RDSDBCluster
+      Engine: aurora-postgresql
+#      DBSubnetGroupName: !Ref DBSubnetGroup
+      PubliclyAccessible: false
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: String
+      DBSubnetGroupName: !Sub ${AWS::StackName}-subnet-group
+      SubnetIds:
+        - Fn::ImportValue:
+            !Sub "${ExportKeyToUse}-subnet-a"
+        - Fn::ImportValue:
+            !Sub "${ExportKeyToUse}-subnet-b"
+
+  
