@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.progrexion.bcm</groupId>
+	<artifactId>bcm</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>bcm</name>
+	<url>http://maven.apache.org</url>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.4.RELEASE</version>
+		<relativePath/>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>11</java.version>
+		<sqljdbc4.version>4.0</sqljdbc4.version>
+		<model.mapper.version>1.1.3</model.mapper.version>
+		<reactor.spring.version>1.0.1.RELEASE</reactor.spring.version>
+		<customermaster.version>1.0.2.358</customermaster.version>
+		<pbs.version>0.0.0.2163</pbs.version>
+		<messaging.version>0.0.0.255</messaging.version>
+		<checkstyle-maven-plugin.version>3.0.0</checkstyle-maven-plugin.version>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPaths>${project.basedir}/../target/jacoco-unit.exec</sonar.jacoco.reportPaths>
+		<sonar.language>java</sonar.language>
+		<jacoco.version>0.8.3</jacoco.version>
+		<sonar.version>3.6.0.1398</sonar.version>
+		<oauth.version>2.1.8.RELEASE</oauth.version>
+		<sonar.exclusions>**/*Dto.java,**/*Model.java,pom.xml</sonar.exclusions>
+		<junit.dataprovider.version>1.10.0</junit.dataprovider.version>
+		<lombok.version>1.18.10</lombok.version>
+		<javax-validation-version>2.0.1.Final</javax-validation-version>
+		<javax.jms-api.version>2.0.1</javax.jms-api.version>
+		<javax.inject.version>1</javax.inject.version>
+		<pgx.common.version>0.0.0.404</pgx.common.version>
+		<pgx.common.interface.version>0.0.0.404</pgx.common.interface.version>
+		<common.utils.version>${pgx.common.version}</common.utils.version>
+		<common-documents.version>${pgx.common.version}</common-documents.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.modelmapper</groupId>
+				<artifactId>modelmapper</artifactId>
+				<version>${model.mapper.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security.oauth.boot</groupId>
+				<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+				<version>${oauth.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<!-- <optional>true</optional> -->
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>${javax-validation-version}</version>
+			</dependency>
+			<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
+		</dependency>
+			<!-- PGX Dependencies -->
+			<dependency>
+				<groupId>com.progrexion</groupId>
+				<artifactId>customer-master-model</artifactId>
+				<version>${customermaster.version}</version>
+			</dependency> 
+			<dependency>
+				<groupId>com.progrexion</groupId>
+				<artifactId>common-config</artifactId>
+				<version>${pgx.common.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>spring-data-commons</artifactId>
+						<groupId>org.springframework.data</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.progrexion</groupId>
+				<artifactId>common-utils</artifactId>
+				<version>${common.utils.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.progrexion</groupId>
+				<artifactId>common-interfaces</artifactId>
+				<version>${pgx.common.interface.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<distributionManagement>
+        <snapshotRepository>
+            <id>vwsl-mvnrepo-libs-snapshot</id>
+            <name>vwsl-mvnrepo.pgx.local-snapshots</name>
+            <url>https://pgx.jfrog.io/pgx/libs-snapshot-local</url>
+        </snapshotRepository>
+        <repository>
+            <id>vwsl-mvnrepo-libs-release</id>
+            <name>vwsl-mvnrepo.pgx.local-releases</name>
+            <url>https://pgx.jfrog.io/pgx/libs-release-local</url>
+        </repository>
+    </distributionManagement>
+
+
+	<modules>
+		<module>bcm-common</module>
+		<module>bcm-service</module>
+		<module>bcm-web</module>
+		<module>bcm-data</module>
+		<module>bcm-dto</module>
+		<module>renttrack-plugin</module>
+    	<module>bcm-messaging</module>
+		<module>bcm-jobs</module>
+  </modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>${sonar.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+					<configuration>
+						<destFile>${sonar.jacoco.reportPaths}</destFile>
+						<dataFile>${sonar.jacoco.reportPaths}</dataFile>
+						<output>file</output>
+						<append>true</append>
+						<excludes>
+							<exclude>*MethodAccess</exclude>
+						</excludes>
+					</configuration>
+					<executions>
+						<execution>
+							<id>jacoco-initialize</id>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+							<phase>test-compile</phase>
+						</execution>
+						<execution>
+							<id>jacoco-site</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+
+</project>

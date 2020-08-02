@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <servers>
+      <server>
+          <id>vwsl-mvnrepo-libs-release</id>
+          <username>admin</username>
+          <password>t94=qLW{[*zPoZu#CZ+8</password>
+       </server>
+      <server>
+          <id>vwsl-mvnrepo-libs-snapshot</id>
+          <username>admin</username>
+          <password>t94=qLW{[*zPoZu#CZ+8</password>
+       </server>
+      <server>
+          <id>vwsl-mvnrepo-plugins-release</id>
+          <username>admin</username>
+          <password>t94=qLW{[*zPoZu#CZ+8</password>
+       </server>
+      <server>
+          <id>vwsl-mvnrepo-plugins-snapshot</id>
+          <username>admin</username>
+          <password>t94=qLW{[*zPoZu#CZ+8</password>
+       </server>
+      <server>
+          <id>adobe.public</id>
+          <username>admin</username>
+          <password>t94=qLW{[*zPoZu#CZ+8</password>
+       </server>
+  </servers>
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+            <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+            <sonar.host.url> http://localhost:9000 </sonar.host.url>
+                <sonar.login> 86badf9c17369910bd88bd1203f65537c6c3f57b </sonar.login>
+            </properties>
+        </profile>
+    <profile>
+      <repositories>
+        <repository>
+            <id>adobe-public-releases</id>
+            <name>Adobe Public Repository</name>
+            <url>https://repo.adobe.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>adobe.public</id>
+            <name>Adobe Public Repository</name>
+            <url>https://pgx.jfrog.io/pgx/adobe.public</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>vwsl-mvnrepo-libs-release</id>
+          <name>libs-release</name>
+          <url>https://pgx.jfrog.io/pgx/libs-release</url>
+        </repository>
+        <repository>
+          <snapshots />
+          <id>vwsl-mvnrepo-libs-snapshot</id>
+          <name>libs-snapshot</name>
+          <url>https://pgx.jfrog.io/pgx/libs-snapshot</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+            <id>adobe-public-releases</id>
+            <name>Adobe Public Repository</name>
+            <url>https://repo.adobe.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+        </pluginRepository>
+        <pluginRepository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>vwsl-mvnrepo-plugins-release</id>
+          <name>plugins-release</name>
+          <url>https://pgx.jfrog.io/pgx/plugins-release</url>
+        </pluginRepository>
+        <pluginRepository>
+          <snapshots />
+          <id>vwsl-mvnrepo-plugins-snapshot</id>
+          <name>plugins-snapshot</name>
+          <url>https://pgx.jfrog.io/pgx/plugins-snapshot</url>
+        </pluginRepository>
+      </pluginRepositories>
+      <id>artifactory</id>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>artifactory</activeProfile>
+  </activeProfiles>
+
+  <pluginGroups>
+    <pluginGroup>com.spotify</pluginGroup>
+</pluginGroups>
+</settings>

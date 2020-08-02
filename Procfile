@@ -1,0 +1,1 @@
+web: java -jar ./bcm-web/target/bcm-web-0.0.1-SNAPSHOT.jar -Dserver.port=$PORT
