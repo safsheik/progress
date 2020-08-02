@@ -1,0 +1,324 @@
+version: 2.1
+jobs:   
+  deploy-dev:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-dev
+    steps:
+      - checkout
+      - run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+          
+  deploy-test:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-test
+    steps:
+      - checkout
+      - run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+          
+  deploy-stage:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-stage
+    steps:
+      - checkout
+      - run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+  deploy-production:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm
+    steps:
+      - checkout
+      - run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+          
+  deploy-messaging-dev:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-messaging-dev
+    steps:
+      - checkout
+      - run: |          
+          cp bcm-messaging/Dockerfile ./Dockerfile
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+  deploy-messaging-test:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-messaging-test
+    steps:
+      - checkout
+      - run: |          
+          cp bcm-messaging/Dockerfile ./Dockerfile
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+  deploy-messaging-stage:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-messaging-stage
+    steps:
+      - checkout
+      - run: |          
+          cp bcm-messaging/Dockerfile ./Dockerfile
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+  deploy-messaging-prod:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-messaging
+    steps:
+      - checkout
+      - run: |          
+          cp bcm-messaging/Dockerfile ./Dockerfile
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+  deploy-jobs-dev:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-jobs-dev
+    steps:
+      - checkout
+      - run: |          
+          cp bcm-jobs/Dockerfile ./Dockerfile
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+  deploy-jobs-test:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-jobs-test
+    steps:
+      - checkout
+      - run: |          
+          cp bcm-jobs/Dockerfile ./Dockerfile
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+  deploy-jobs-stage:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-jobs-stage
+    steps:
+      - checkout
+      - run: |          
+          cp bcm-jobs/Dockerfile ./Dockerfile
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+  deploy-jobs-prod:
+    machine: true
+    environment:
+      HEROKU_APP_NAME: extracredit-bcm-jobs
+    steps:
+      - checkout
+      - run: |          
+          cp bcm-jobs/Dockerfile ./Dockerfile
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          heroku container:release web -a $HEROKU_APP_NAME
+
+
+  run-automation-scripts:
+    machine: true
+    parameters:
+      env_to_test:
+        type: string
+        default: "dev"    
+    steps:
+      - add_ssh_keys:
+          fingerprints: 
+            - "e7:7f:ed:e7:98:b1:7e:89:60:c1:f7:f2:ea:df:e4:73"      
+      - run: | 
+          echo "Git and Maven versions being used:"      
+          git --version
+          mvn --version 
+          
+          echo "Env to test: << parameters.env_to_test >>"          
+          
+          #The 'fingerprint' added in the 'add_ssh_keys' step enables code checkout of 
+          #a repo other than the main/default repo associated with this pipeline config.
+          
+          echo "Checking out QA Automation Test Script Codebase: progrexion/pgx-qa-automation.git"
+          git clone git@github.com:progrexion/pgx-qa-automation.git
+          
+          echo "Executing tests..."
+          cd pgx-qa-automation
+          
+          mkdir ~/automation-test-results
+          
+          #Use -Dmaven.test.failure.ignore=true to ignore maven test failures,
+          #otherwise build failure caused by failed tests would cause the job to fail.
+          mvn test -DargLine="-Dkarate.env=<< parameters.env_to_test >>" -Dmodule=BcmProjectRunner -Dmaven.test.failure.ignore=true         
+          
+          echo "Copying test results as an artifact..."          
+          cp -r target/cucumber-html-reports/. ~/automation-test-results/                    
+
+      - store_artifacts:
+          path: ~/automation-test-results
+
+      - store_test_results:
+          path: ~/automation-test-results                    
+
+workflows:
+  #version: 2
+  build-deploy:
+    jobs:
+      - deploy-dev:
+          filters:
+            branches:
+              only: integration
+              
+      - deploy-test:
+          filters:
+            branches:
+              only: develop
+
+      - deploy-stage:
+          filters:
+            branches:
+              only: release
+
+      #- deploy-production:
+      #    filters:
+      #      branches:
+      #        only: master
+      
+              
+      - run-automation-scripts:
+          env_to_test: "dev"
+          requires:
+          - deploy-dev
+          filters:
+            branches:
+              only: integration  
+
+      - run-automation-scripts:
+          env_to_test: "test"
+          requires:
+          - deploy-test
+          filters:
+            branches:
+              only: develop 
+
+      - run-automation-scripts:
+          env_to_test: "stage"
+          requires:
+          - deploy-stage
+          filters:
+            branches:
+              only: release 
+              
+      - deploy-messaging-dev:
+          requires:
+          - deploy-dev
+          filters:
+            branches:
+              only: integration              
+
+      - deploy-messaging-test:
+          requires:
+          - deploy-test
+          filters:
+            branches:
+              only: develop
+
+      - deploy-messaging-stage:
+          requires:
+          - deploy-stage
+          filters:
+            branches:
+              only: release
+
+      #- deploy-messaging-prod:
+          #requires:
+          #- deploy-production
+          #filters:
+            #branches:
+              #only: master
+ 
+      #- deploy-jobs-dev:
+          #requires:
+          #- deploy-dev
+          #filters:
+            #branches:
+              #only: integration
+ 
+       #- deploy-jobs-test:
+          #requires:
+          #- deploy-test
+          #filters:
+            #branches:
+              #only: develop
+
+      #- deploy-jobs-stage:
+          #requires:
+          #- deploy-stage
+          #filters:
+            #branches:
+              #only: release
+              
+      #- deploy-jobs-prod:
+          #requires:
+          #- deploy-production
+          #filters:
+            #branches:
+              #only: master              

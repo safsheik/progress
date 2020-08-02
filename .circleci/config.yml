@@ -1,0 +1,237 @@
+version: 2.1
+jobs:   
+  deploy-web:
+    machine: true
+    parameters:
+      job_env:
+        type: string
+        #Env name is prefixed with a Hyphen ("-") for non-prod, and for Prod, env name is set as blank ("").
+        #This is to avoid extra logic within the job's code to set the app name based on the value of the job_env parameter.
+        default: "-dev"
+    environment:      
+      HEROKU_APP_NAME: extracredit-bcm
+    steps:
+      - checkout
+      - run: |         
+          export HEROKUAPP=$HEROKU_APP_NAME<< parameters.job_env >>          
+          
+          docker build -t registry.heroku.com/$HEROKUAPP/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKUAPP/web:latest
+          
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          
+          heroku container:release web -a $HEROKUAPP
+          
+  deploy-messaging:
+    machine: true
+    parameters:
+      job_env:
+        type: string
+        default: "-dev"
+    environment:
+      HEROKU_APP_NAME: bcm-messaging
+    steps:
+      - checkout
+      - run: |          
+          export HEROKUAPP=$HEROKU_APP_NAME<< parameters.job_env >>  
+          
+          cp bcm-messaging/Dockerfile ./Dockerfile
+          
+          docker build -t registry.heroku.com/$HEROKUAPP/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKUAPP/web:latest
+          
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          
+          heroku container:release web -a $HEROKUAPP
+
+
+  deploy-jobs:
+    machine: true
+    parameters:
+      job_env:
+        type: string
+        default: "-dev"    
+    environment:
+      HEROKU_APP_NAME: bcm-jobs
+    steps:
+      - checkout
+      - run: |   
+          export HEROKUAPP=$HEROKU_APP_NAME<< parameters.job_env >>  
+          cp bcm-jobs/Dockerfile ./Dockerfile
+          
+          docker build -t registry.heroku.com/$HEROKUAPP/web .
+          docker login -u $HEROKU_LOGIN -p $HEROKU_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$HEROKUAPP/web:latest
+          
+          chmod +x .circleci/setup-heroku.sh
+          .circleci/setup-heroku.sh 
+          
+          heroku container:release web -a $HEROKUAPP
+
+  run-automation-scripts:
+    machine: true
+    parameters:
+      job_env:
+        type: string
+        default: "dev"    
+    steps:
+      - add_ssh_keys:
+          fingerprints: 
+            - "e7:7f:ed:e7:98:b1:7e:89:60:c1:f7:f2:ea:df:e4:73"      
+      - run: | 
+          echo "Git and Maven versions being used:"      
+          git --version
+          mvn --version 
+          
+          echo "Env to test: << parameters.job_env >>"          
+          
+          #The 'fingerprint' added in the 'add_ssh_keys' step enables code checkout of 
+          #a repo other than the main/default repo associated with this pipeline config.
+          
+          echo "Checking out QA Automation Test Script Codebase: progrexion/pgx-qa-automation.git"
+          git clone git@github.com:progrexion/pgx-qa-automation.git
+          
+          echo "Executing tests..."
+          cd pgx-qa-automation
+          
+          mkdir ~/automation-test-results
+          
+          #Use -Dmaven.test.failure.ignore=true to ignore maven test failures,
+          #otherwise build failure caused by failed tests would cause the job to fail.
+          mvn test -DargLine="-Dkarate.env=<< parameters.job_env >>" -Dmodule=BcmProjectRunner -Dmaven.test.failure.ignore=true         
+          
+          echo "Copying test results as an artifact..."          
+          cp -r target/cucumber-html-reports/. ~/automation-test-results/                    
+
+      - store_artifacts:
+          path: ~/automation-test-results
+
+      - store_test_results:
+          path: ~/automation-test-results                    
+
+workflows:
+  #version: 2
+  build-deploy-dev:
+    jobs:
+      - deploy-web:
+          job_env: -dev
+          filters:
+            branches:
+              only: integration
+
+      - deploy-messaging:
+          job_env: -dev
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: integration
+              
+      - deploy-jobs:
+          job_env: -dev
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: integration
+              
+      - run-automation-scripts:
+          job_env: dev
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: integration    
+      
+  build-deploy-test:
+    jobs:
+      - deploy-web:
+          job_env: -test
+          filters:
+            branches:
+              only: develop
+
+      - deploy-messaging:
+          job_env: -test
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: develop
+              
+      - deploy-jobs:
+          job_env: -test
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: develop
+              
+      - run-automation-scripts:
+          job_env: test
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: develop            
+
+  build-deploy-stage:
+    jobs:
+      - deploy-web:
+          job_env: -stage
+          filters:
+            branches:
+              only: release
+
+      - deploy-messaging:
+          job_env: -stage
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: release
+              
+      - deploy-jobs:
+          job_env: -stage
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: release
+              
+      - run-automation-scripts:
+          job_env: stage
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: release               
+
+  build-deploy-prod:
+    jobs:
+      - deploy-web:
+          job_env: ""
+          filters:
+            branches:
+              only: master
+
+      - deploy-messaging:
+          job_env: ""
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: master
+              
+      - deploy-jobs:
+          job_env: ""
+          requires:
+          - deploy-web
+          filters:
+            branches:
+              only: master
+               

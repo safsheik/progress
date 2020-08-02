@@ -1,0 +1,156 @@
+server:
+  servlet:
+    context-path: /buildcredit
+  port: ${PORT:8081}
+
+spring:
+  application:
+    name: bcm-jobs
+  datasource:
+    url: ${DB_HOST:jdbc:postgresql://dbclusteridentifier-extracredit-bcm-dev-data01.cluster-czqcrnu8rq1a.us-west-2.rds.amazonaws.com:5432/BuildCredit?currentSchema="rtcustomer"}
+    username: ${DB_USERNAME:moasan}
+    password: ${DB_PASSWORD:Bcm@123%}
+    initialization-mode: always
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties: 
+      schema: rtcustomer 
+      hibernate:
+        ddl-auto: none
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      temp:
+        use_jdbc_metadata_defaults: false
+      jdbc.lob.non_contextual_creation: true
+      batch.initialize-schema: always
+  
+management.endpoint.health.show-details: always
+#management.security.enabled: false
+
+#RentTrack: OAuth Partner Properties
+renttrack:
+  oauth:
+    baseUrl: ${RENTTRACK_OAUTH_BASEURL:https://my.sandbox.rt-stg.com}
+    clientId: ${RENTTRACK_OAUTH_CLIENT_ID:26_26twn8ycdge8wo4gcc8k8kwwkwwocw00goc4o488s08g00w00w}
+    clientSecret: ${RENTTRACK_OAUTH_CLIENT_SECRET:4k7iv14um3k0cwks4gwwg8k80oc4o48cgkog8g0cs48g884cww}
+    grantType: ${RENTTRACK_OAUTH_GRANT_TYPE:password}
+    password: ${RENTTRACK_OAUTH_PASSWORD:cdcR0cks!}
+    refreshTokenUrl: ${RENTTRACK_OAUTH_REFRESH_TOKENURL:/oauth/v2/token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&refresh_token=REFRESH_TOKEN&grant_type=GRANT_TYPE}
+    tokenUrl: ${RENTTRACK_OAUTH_TOKENURL:/oauth/v2/token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&username=USER_NAME&password=SECRET&grant_type=GRANT_TYPE}
+    username: ${RENTTRACK_OAUTH_USERNAME:ibell@progrexion.com}
+  property:
+    paymentAccPayType: nopay
+    plaidPublicTokenPrefix: public-sandbox-
+    subscriptionDetails: CCOM_PLAN:consumer_lite,CCOM_PROMO:CREDITCOMFREE
+    transactionAmountMaxBy: 1
+    transactionAmountMinBy: 99
+    transactionWindowCloseBy: 5
+    transactionWindowOpenBy: 7
+    trxByDefaultAmountMax: 1000
+    trxByDefaultAmountMin: 1
+    trxByDefaultWindowClose: 31
+    trxByDefaultWindowOpen: 1
+    utilStatus: current,finished
+    utilTypes: GAS,WATER,ELECTRIC,WIRELESS
+  uri:
+    allSubscriptions: ${RENTTRACK_API_ALLSUBSCRIPTIONS:/api/tenant/subscriptions?representation=only_active}
+    baseUrl: ${RENTTRACK_API_BASEURL:https://my.sandbox.rt-stg.com}
+    createLease: ${RENTTRACK_API_CREATE_LEASE:/api/tenant/leases}
+    createPlaidPaymentAccount: ${RENTTRACK_API_CREATE_PAYMENT_ACCOUNT:/api/tenant/plaid/payment_accounts}
+    createSubscription: ${RENTTRACK_API_CREATE_SUBSCRIPTION:/api/tenant/subscriptions}
+    createTrxFinderByLeaseId: ${RENTTRACK_API_CREATE_TRX_FINDER:/api/tenant/leases/LEASE_ID/transaction_finders}
+    createUser: ${RENTTRACK_API_CREATE_USER:/api/partner/users}
+    getAllUtilities: ${RENTTRACK_API_ALL_UTILITIES:/api/tenant/utilities?representation=detailed}
+    getUtilityByTradeLineId: ${RENTTRACK_API_UTIL_DETAILS:/api/tenant/utilities/UTIL_TRADE_LINE_ID/matches?representation=detailed}
+    leaseOrders: ${RENTTRACK_API_LEASE_ORDERS:/api/tenant/leases/LEASE_ID/orders?representation=detailed}
+    matchTrxFinderByLeaseId: ${RENTTRACK_API_MATCH_TRX_FINDER:/api/tenant/transaction_finders/TRX_FINDER_ID/match}
+    patchUtility: ${RENTTRACK_API_PATCH_UTILITY:/api/tenant/utilities/UTIL_TRADE_LINE_ID}
+    paymentAccount: ${RENTTRACK_API_PAYMENT_ACCOUNT:/api/tenant/payment_accounts}
+    plaidReconnectByPayAccId: ${RENTTRACK_API_PLAID_RECCONECTION:/api/tenant/plaid/payment_accounts/PAYMENT_ACCOUNT_ID/reconnect}
+    searchTrxById: ${RENTTRACK_API_SEARCH_TRX_FINDER_BY_ID:/api/tenant/transaction_finders/TRX_FINDER_ID/search}
+    searchTrxFinderByLeaseId: ${RENTTRACK_API_SEARCH_TRX_FINDER_BY_LID:/api/tenant/leases/LEASE_ID/transaction_finders/TRX_FINDER_ID/search}
+    transactionFinder: ${RENTTRACK_API_TRX_FINDER:/api/tenant/transaction_finders/TRX_FINDER_ID}
+    updateTrxById: ${RENTTRACK_API_UPDATE_TRX_FINDER:/api/tenant/transaction_finders/}
+    updateUser: ${RENTTRACK_API_UPDATE_USER:/api/tenant/details}
+    utilityOrders: ${RENTTRACK_API_UTILITY_ORDERS:/api/tenant/utilities/UTILITY_ID/orders?representation=detailed}
+    subscriptions: ${RENTTRACK_API_SUBSCRIPTIONS:/api/tenant/subscriptions}
+    getActiveSubscriptions: ${RENTTRACK_API_GET_ACTIVE_SUBSCRIPTIONS:/api/tenant/subscriptions?representation=only_active}
+    deleteSubscription: ${RENTTRACK_API_SUBSCRIPTIONS:/api/tenant/subscriptions}/{id}
+
+
+#Customer Master Properties
+
+customermaster:
+  property:
+    host: ${CUSTOMER_MASTER_API_HOST:http://10.40.30.119:8080/customer_master}
+  #host: ${CUSTOMER_MASTER_API_HOST:http://private-181b97-customermaster.apiary-mock.com/customer_master}
+    apiUser: ${CUSTOMER_MASTER_API_USER:apitest}
+    password: ${CUSTOMER_MASTER_API_PASSWORD:password}
+    customerDetailsUri: ${CUSTOMER_MASTER_DETAILS_URI:/v4/customers/{UCID}/details/{BRAND}}
+    headerNameEndUser: End-User
+    headerValueEndUser: batch
+    headerNameEndUserType: End-User-Type
+    headerValueEndUserType: UNKNOWN
+    customerUri: ${CUSTOMER_MASTER_CUSTOMER_URI:/v4/customers/{UCID}}
+    apiRetryCount: ${CUSTOMER_MASTER_API_RETRY_COUNT:4}
+    
+bcm:
+  property:
+  #if the property is ON, then Log will be captured, if it OFF, No logs will be captured
+    logRequired: ${BCM_LOG_REQUIRED:ON}
+  #Comma separated http methods. Example GET,POST,DELETE,PUT,PATCH
+    logOffMethods: ${BCM_LOG_OFF_METHODS:NIL}
+  
+messageprocessor:
+  cancelsubscription:
+    criteria:
+      #Comma separated list of brands. Example: CCOM,LEX
+      brands: CCOM
+      featureCode: ${MSG_FEATURE_CODE:Rent_Track}
+
+activemq:
+  tempField: temp
+  jmsRecoveryInterval: 6000
+  modules:
+    pbs:
+      connection:
+        brokerurl: ${BCM_AMQ_PBS_HOST:ssl://broker-test.pgx.local:61616?verifyHostName=false}
+        username: ${BCM_AMQ_PBS_USER:pbs_test}
+        password: ${BCM_AMQ_PBS_PWD:veryinsecurepasswordforpbsuser}
+#        brokerurl: ${BCM_AMQ_LOCAL_HOST:tcp://localhost:61616}
+#        username: ${BCM_AMQ_LOCAL_USER:admin}
+#        password: ${BCM_AMQ_LOCAL_PWD:admin}
+      destinations:
+        provisioningchange:
+          destinationName: ${BCM_AMQ_PBS_PROVCHANGE_DEST:PBS.Public.ProvisioningChangeTopic}
+          isTopic: ${BCM_AMQ_PBS_PROVCHANGE_ISTOPIC:true}
+          isQueue: ${BCM_AMQ_PBS_PROVCHANGE_ISQUEUE:false}
+          clientid: ${BCM_AMQ_PBS_PROVCHANGE_TOPIC_CLIENTID:bcm-pbs-listener-local}
+          retryRequired: false
+          retryAttemptCount: 0
+          initialRedeliveryDelay: 1000
+          redeliveryDelay: 1000
+          maximumRedeliveries: 3
+          exponentialBackoffRequired: false
+          backoffMultiplier: 1
+    bcm:
+      connection:
+        brokerurl: ${BCM_AMQ_HOST:ssl://b-f5b9a06c-9ad4-40c0-97a5-71fb647c7f32-1.mq.us-west-2.amazonaws.com:61617?verifyHostName=false}
+        username: ${BCM_AMQ_USER:bcm-mq-user}
+        password: ${BCM_AMQ_PWD:Start123456789}
+#        brokerurl: ${BCM_AMQ_LOCAL_HOST:tcp://localhost:61616}
+#        username: ${BCM_AMQ_LOCAL_USER:admin}
+#        password: ${BCM_AMQ_LOCAL_PWD:admin}
+      destinations:
+        jobprocessingorder:
+          destinationName: ${BCM_AMQ_JOB_PROCESSORDERS_DEST:BuildCredit.Private}
+
+          isQueue: ${BCM_AMQ_JOB_PROCESSORDERS_ISQUEUE:true}
+          isTopic: ${BCM_AMQ_JOB_PROCESSORDERS_ISTOPIC:false}
+          #clientid: ${BCM_AMQ_BCMJOB_PROCESSORDERS_QUEUE_CLIENTID:bcm-pbs-listener-local}
+          retryRequired: false
+          retryAttemptCount: 0
+          initialRedeliveryDelay: 1000
+          redeliveryDelay: 1000
+          maximumRedeliveries: 3
+          exponentialBackoffRequired: false
+          backoffMultiplier: 1
